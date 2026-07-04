@@ -1,1 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>116年教師調薪全方位快速試算與對照系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for High-Quality Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        slate: {
+                            950: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Hide scrollbars but keep scrolling */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
+    <!-- Top-level Navigation & Alert Bar -->
+    <div class="bg-amber-500 text-slate-950 text-center py-2 px-4 text-xs font-bold shadow-sm flex items-center justify-center gap-2">
+        <span class="animate-pulse bg-red-600 text-white text-[10px] uppercase px-1.5 py-0.5 rounded font-extrabold">NEW</span>
+        <span>行政院拍板「116年度軍公教員工待遇提升方案」兩階段雙軌加薪新制（加給定額 +2,000 元且提前生效 & 本俸 4% 累加）</span>
+    </div>
+
+    <!-- Header / Hero Section -->
+    <header class="bg-gradient-to-br from-brand-950 via-brand-900 to-emerald-950 text-white py-12 px-6 shadow-md relative overflow-hidden">
+        <!-- Abstract Background Shapes -->
+        <div class="absolute right-0 top-0 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl -translate-y-12 translate-x-12"></div>
+        <div class="absolute left-1/3 bottom-0 w-80 h-80 bg-emerald-400/5 rounded-full blur-3xl translate-y-24"></div>
+        
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-center md:text-left space-y-3 max-w-3xl">
+                    <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-500/30 uppercase tracking-wider inline-block">
+                        <i class="fa-solid fa-square-poll-vertical mr-1"></i> 全功能合一 · 實務精算級系統
+                    </span>
+                    <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">116年公立學校教師調薪<br><span class="text-brand-400">全方位快速試算與對照系統</span></h1>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        本系統專為教育人員設計，已全面校正為<b>114年最新公告教師薪資表</b>，補全「實領應扣公保/退撫/健保費」、「考績年終整年所得增幅」與「兼課鐘點費試算」，內建 120 至 770 全薪點資料庫，輕鬆精算您的新舊實質收入！
+                    </p>
+                </div>
+                <div class="hidden lg:flex bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex-col items-center justify-center text-center w-60 shrink-0">
+                    <span class="text-xs text-brand-300 font-bold uppercase tracking-widest">最高實質調幅</span>
+                    <span class="text-4xl font-black text-amber-300 my-1">11.56%</span>
+                    <span class="text-[11px] text-slate-300 leading-snug">兼任行政主管及基層教師之累積調薪效益顯著</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- Tab Navigation (4 Tabs) -->
+        <div class="flex border-b border-slate-200 mb-8 overflow-x-auto scrollbar-none gap-2">
+            <button onclick="switchTab('calc')" id="btn-tab-calc" class="tab-btn px-5 py-3.5 font-bold text-sm border-b-2 border-brand-600 text-brand-700 focus:outline-none transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-calculator text-brand-600"></i> 教師薪資與獎金全功能試算
+            </button>
+            <button onclick="switchTab('hourly')" id="btn-tab-hourly" class="tab-btn px-5 py-3.5 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-brand-600 focus:outline-none transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-clock-rotate-left"></i> 兼課與超時鐘點費試算
+            </button>
+            <button onclick="switchTab('table')" id="btn-tab-table" class="tab-btn px-5 py-3.5 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-brand-600 focus:outline-none transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-table-list"></i> 120-770 薪點搜尋對照表
+            </button>
+            <button onclick="switchTab('faq')" id="btn-tab-faq" class="tab-btn px-5 py-3.5 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-brand-600 focus:outline-none transition-all duration-200 flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-book-open"></i> 最新調薪時程與法規 FAQ
+            </button>
+        </div>
+
+        <!-- TAB 1: ALL-IN-ONE CALCULATOR -->
+        <div id="tab-calc" class="tab-content block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left Control & Input Panel (5 Cols on LG) -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Section A: School Level & Presets -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-brand-600 rounded-full"></span> 步驟 1：選擇學校體系與職務身份
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- School Level Toggle -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">學校體系別</label>
+                                <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
+                                    <button id="level-k12-btn" onclick="setSchoolLevel('k12')" class="py-2.5 text-xs font-bold rounded-lg bg-white text-brand-800 shadow-sm transition-all flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-school text-brand-600"></i> 高級中等以下學校
+                                    </button>
+                                    <button id="level-higher-btn" onclick="setSchoolLevel('higher')" class="py-2.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-graduation-cap"></i> 大專校院 (大專)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Preset select -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">常用教師起點與職務快速套用</label>
+                                <select id="preset-select" onchange="applyPreset()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-3 text-sm text-slate-700 font-medium focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all cursor-pointer">
+                                    <option value="custom">-- 自行選擇薪點 / 自訂數值 --</option>
+                                    <optgroup label="🎒 中小學、幼兒園教師 (K-12)" id="optgroup-k12">
+                                        <option value="bachelor-start">學士學位初任教師 (190薪點 - $25,050)</option>
+                                        <option value="master-start">碩士學位初任教師 (245薪點 - $29,270)</option>
+                                        <option value="phd-start">博士學位初任教師 (330薪點 - $35,010)</option>
+                                        <option value="bachelor-max">學士最高本薪級 (245薪點 + 兼導師)</option>
+                                        <option value="master-max">碩士最高本薪級 (330薪點 + 兼導師)</option>
+                                        <option value="senior-k12">資深高級教師 (650薪點 - $55,690)</option>
+                                        <option value="top-k12">中小學頂格教師 (680薪點 + 兼導師)</option>
+                                    </optgroup>
+                                    <optgroup label="🎓 大專校院教研人員" id="optgroup-higher">
+                                        <option value="lecturer-start">專任講師初敘 (245薪點 - $29,270)</option>
+                                        <option value="assistant-prof">專任助理教授初敘 (310薪點 - $33,860)</option>
+                                        <option value="associate-prof">專任副教授初敘 (390薪點 - $38,460)</option>
+                                        <option value="professor-start">專任教授初敘 (475薪點 - $44,970)</option>
+                                        <option value="professor-top">教授最高年功頂格 (770薪點 - $63,570)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section B: Customize Details -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+                        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-brand-600 rounded-full"></span> 步驟 2：個人待遇細節微調 (114年最新舊制基準)
+                        </h3>
+
+                        <!-- Grade (薪點) Selector -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">薪級 / 薪點選擇</label>
+                            <select id="input-point" onchange="onPointChange()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all cursor-pointer">
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                            <div class="flex justify-between text-[11px] text-slate-400 mt-1.5 px-0.5">
+                                <span>114年本俸: <strong id="old-base-hint" class="font-bold text-slate-600">$25,050</strong> 元</span>
+                                <span>116年新本俸 (通案+4%): <strong id="new-base-hint" class="font-bold text-brand-700">$26,052</strong> 元</span>
+                            </div>
+                        </div>
+
+                        <!-- Academic Research Allowance (學術研究加給) -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">學術研究加給 (114年標準)</label>
+                                <label class="inline-flex items-center text-xs text-brand-700 font-semibold cursor-pointer">
+                                    <input type="checkbox" id="check-manual-research" onchange="toggleManualResearch()" class="mr-1.5 rounded border-slate-300 text-brand-600 h-3.5 w-3.5 focus:ring-brand-500">
+                                    手動修改金額
+                                </label>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-2.5 text-slate-400 text-sm font-mono">$</span>
+                                <input type="number" id="input-research" oninput="onResearchManualInput()" class="w-full bg-slate-100 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" value="23080" readonly>
+                            </div>
+                            <div class="mt-2 space-y-1.5">
+                                <p class="text-[11px] text-slate-400 flex items-center gap-1" id="research-info-text">
+                                    <i class="fa-solid fa-circle-info text-slate-300"></i>
+                                    依薪點與體系自動對應
+                                </p>
+                                <!-- Uncertified surrogate teacher toggle -->
+                                <label id="surrogate-group" class="inline-flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" id="check-surrogate" onchange="calculateSalary()" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="text-xs font-semibold text-amber-700">未具合格教師證代理教師（學術研究加給打 8 折）</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Administrative Supervisor / Principal / Directors -->
+                        <div class="pt-3 border-t border-slate-100 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-supervisor" onchange="toggleSupervisor()" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="text-xs font-bold text-slate-700">兼任行政主管（享有主管職務加給）</span>
+                                </label>
+                            </div>
+                            <div id="supervisor-select-group" class="hidden pl-6 space-y-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200/50">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">主管加給預設分級</label>
+                                    <select id="supervisor-preset" onchange="applySupervisorPreset()" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 font-medium focus:ring-1 focus:ring-brand-500">
+                                        <option value="custom">-- 自行輸入原主管職務加給 --</option>
+                                        <option value="principal-high">高級中等學校校長級 (114年 $13,110)</option>
+                                        <option value="principal-elem">國民中小學校長級 (114年 $9,710)</option>
+                                        <option value="director">大校處室主任/大專主管級 (114年 $7,520)</option>
+                                        <option value="section-chief-high">大校組長級 (114年 $5,750)</option>
+                                        <option value="section-chief-mid">中等學校組長級 (114年 $4,720)</option>
+                                        <option value="section-chief-low">小規模組長級 (114年 $4,190)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 mb-1">114年主管加給額 ($)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-2.5 top-1.5 text-slate-400 text-xs">$</span>
+                                        <input type="number" id="input-supervisor" oninput="calculateSalary()" class="w-full bg-white border border-slate-200 rounded-md pl-6 pr-2 py-1 text-xs font-semibold text-slate-800 focus:ring-1 focus:ring-brand-500" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Flat Allowances: Class Advisor (導師費) & Special Ed (特教津貼) -->
+                        <div class="pt-3 border-t border-slate-100 space-y-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">職務定額津貼附加</label>
+                            
+                            <!-- Class Advisor -->
+                            <div class="flex items-center">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-advisor" onchange="calculateSalary()" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="text-xs font-medium text-slate-700">兼任班級導師（導師費定額 $4,000 元）</span>
+                                </label>
+                            </div>
+
+                            <!-- Special Ed -->
+                            <div class="flex items-center">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-special-ed" onchange="calculateSalary()" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="text-xs font-medium text-slate-700">支領特殊教育津貼（新制特教加給 $2,800 元）</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section C: Advanced Practical Modules (Deductions & Annual Income) -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-orange-50 rounded-full"></span> 步驟 3：開啟實務精算模組
+                        </h3>
+
+                        <!-- Deductions Toggle -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/50">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-deductions" onchange="onDeductionToggle()" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500 h-4 w-4">
+                                    <span class="text-xs font-bold text-slate-700">精算「公保、退撫儲金、健保」扣除額</span>
+                                </label>
+                                <span class="bg-orange-100 text-orange-800 text-[10px] font-extrabold px-1.5 py-0.5 rounded">實領月薪</span>
+                            </div>
+                            <div id="deductions-info-group" class="hidden text-[11px] text-slate-500 space-y-1 pl-6 pt-1">
+                                <p>• <strong>公立退撫儲金個人自提</strong>：以 2 倍本俸 × 15% × 35% 撥提 (10.5% 本俸)</p>
+                                <p>• <strong>公教人員保險 (公保)</strong>：以 本俸 × 8.83% × 35% 扣減 (約 3.09% 本俸)</p>
+                                <p>• <strong>全民健保費</strong>：按 (本俸 + 加給) 之健保投保分級級距自付 30% 估扣 (約 1.35% 總薪資)</p>
+                            </div>
+                        </div>
+
+                        <!-- Annual Bonus Income Toggle -->
+                        <div class="p-3 bg-brand-50 rounded-xl border border-brand-200/50">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="check-annual" onchange="onAnnualToggle()" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4">
+                                    <span class="text-xs font-bold text-slate-800">精算「全年所得總增幅與獎金」</span>
+                                </label>
+                                <span class="bg-brand-100 text-brand-800 text-[10px] font-extrabold px-1.5 py-0.5 rounded">整年多領</span>
+                            </div>
+                            <div id="annual-info-group" class="hidden space-y-2 pl-6 pt-1">
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400">年終工作獎金 (月)</label>
+                                        <input type="number" id="input-year-end-months" oninput="calculateSalary()" class="w-full bg-white border border-slate-200 rounded px-2 py-0.5 text-xs font-bold text-slate-700" value="1.5" step="0.5" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400">成績考核獎金 (月)</label>
+                                        <select id="input-evaluation-months" onchange="calculateSalary()" class="w-full bg-white border border-slate-200 rounded px-1 py-0.5 text-xs font-bold text-slate-700">
+                                            <option value="1.0">甲等 (1.0 個月)</option>
+                                            <option value="0.5">乙等 (0.5 個月)</option>
+                                            <option value="2.0">雙薪年功頂 (2.0 個月)</option>
+                                            <option value="0">不領取考績獎金</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-500">• 年終及考績考核之計發基數為（本俸 + 學術研究加給 + 主管加給）。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Results & Analytical Panel (7 Cols on LG) -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Total Compensation Comparison Premium Card -->
+                    <div class="bg-gradient-to-br from-brand-950 via-slate-900 to-brand-950 rounded-3xl p-6 shadow-xl text-white relative overflow-hidden">
+                        <!-- Neon Glow Effects -->
+                        <div class="absolute -right-24 -top-24 w-60 h-60 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                        <div class="absolute -left-20 -bottom-20 w-52 h-52 bg-green-500/10 rounded-full blur-3xl"></div>
+                        
+                        <div class="relative z-10 space-y-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="bg-brand-500/20 text-brand-300 text-xs font-extrabold px-3 py-1 rounded-md border border-brand-500/30">
+                                    <span id="rank-badge-text">學士學位初任教師 (190薪點)</span>
+                                </span>
+                                <span class="text-[11px] text-slate-400 font-medium" id="calc-net-badge-text">目前顯示：未扣款應領總薪資</span>
+                            </div>
+                            
+                            <!-- Large Number Display Grid -->
+                            <div class="grid grid-cols-2 gap-4 pt-2">
+                                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/5">
+                                    <p class="text-brand-300 text-[11px] font-bold tracking-wider uppercase">調整前月薪 (114年新表標準)</p>
+                                    <p class="text-3xl md:text-4xl font-black text-slate-100 mt-1 font-mono">
+                                        $<span id="total-old">48,130</span>
+                                    </p>
+                                    <p class="text-[10px] text-slate-400 mt-1" id="old-desc-hint">本俸 + 學術加給</p>
+                                </div>
+                                <div class="bg-brand-500/10 backdrop-blur-sm rounded-2xl p-4 border border-brand-500/20">
+                                    <p class="text-amber-300 text-[11px] font-bold tracking-wider uppercase">調整後月薪 (116年新制)</p>
+                                    <p class="text-3xl md:text-4xl font-black text-amber-400 mt-1 font-mono">
+                                        $<span id="total-new">52,134</span>
+                                    </p>
+                                    <p class="text-[10px] text-brand-300 mt-1" id="new-desc-hint">雙軌調整 + 4% 累加效果</p>
+                                </div>
+                            </div>
+
+                            <!-- Real Increase Display & Annual Boost -->
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/5 space-y-3">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                    <div>
+                                        <p class="text-slate-300 text-[11px] font-medium">每月實質增額 (落差)</p>
+                                        <p class="text-xl font-black text-emerald-400 font-mono mt-0.5">
+                                            + $<span id="diff-amount">4,004</span> 元
+                                        </p>
+                                    </div>
+                                    <div class="bg-emerald-500 text-slate-950 rounded-xl px-4 py-2 flex items-center gap-1.5 shadow-md">
+                                        <span class="text-xs font-bold">預估實質總調幅：</span>
+                                        <span class="text-lg font-black font-mono" id="total-pct">8.32%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Annual Income block -->
+                                <div id="annual-results-block" class="hidden pt-3 border-t border-white/10 flex justify-between items-center bg-brand-500/5 p-2 rounded-lg">
+                                    <div>
+                                        <p class="text-amber-200 text-[11px] font-bold">估算年度實質所得總增加：</p>
+                                        <p class="text-slate-400 text-[10px]">含月薪及 <span id="bonus-months-label">1.5個月年終 + 1個月考核</span> 獎金增幅</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-xl font-extrabold text-amber-400 font-mono" id="annual-diff-amount">+ $58,058</span>
+                                        <span class="text-xs text-amber-300 font-bold block">新台幣 / 年</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Three-Stage Timeline Evolution Progress -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-brand-600"></i> 軍公教兩階段待遇提升：三階段演變對比
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Stage 1 Progress -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold text-slate-600">
+                                    <span>階段 A：114年度舊制基數（已校正為 114 年新本俸）</span>
+                                    <span class="font-mono text-slate-500" id="progress-val-a">$48,130</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="progress-bar-a" class="bg-slate-400 h-2.5 rounded-full transition-all duration-500" style="width: 80%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Stage 2 Progress -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold text-blue-600">
+                                    <span>階段 B：115年7月1日加碼（提前定額加給 +$2,000）</span>
+                                    <span class="font-mono text-blue-500" id="progress-val-b">$50,130</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="progress-bar-b" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 87%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Stage 3 Progress -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold text-brand-700">
+                                    <span>階段 C：116年1月1日新制（本俸與定額後加給全面乘 1.04）</span>
+                                    <span class="font-mono text-brand-600" id="progress-val-c">$52,134</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                                    <div id="progress-bar-c" class="bg-gradient-to-r from-brand-500 to-brand-600 h-2.5 rounded-full transition-all duration-500" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown & Deductions Details Card -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-brand-600"></i> 細部分項金額對比（應領明細）
+                        </h3>
+                        
+                        <div class="divide-y divide-slate-100 text-xs">
+                            <!-- Basic salary comparison -->
+                            <div class="py-3 flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-slate-700">本俸 / 俸額</span>
+                                    <p class="text-[10px] text-slate-400">通案 116年直接調薪 4%</p>
+                                </div>
+                                <div class="text-right font-mono text-slate-600">
+                                    <span id="breakdown-old-base">$25,050</span>
+                                    <i class="fa-solid fa-arrow-right mx-2 text-slate-300"></i>
+                                    <span class="font-bold text-slate-900" id="breakdown-new-base">$26,052</span>
+                                </div>
+                            </div>
+
+                            <!-- Academic Research Allowance -->
+                            <div class="py-3 flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-slate-700">教師學術研究加給</span>
+                                    <p class="text-[10px] text-slate-400">雙軌定額 +2,000 元後，再通案乘以 1.04</p>
+                                </div>
+                                <div class="text-right font-mono text-slate-600">
+                                    <span id="breakdown-old-research">$23,080</span>
+                                    <i class="fa-solid fa-arrow-right mx-2 text-slate-300"></i>
+                                    <span class="font-bold text-slate-900" id="breakdown-new-research">$26,083</span>
+                                </div>
+                            </div>
+
+                            <!-- Supervisor Allowance -->
+                            <div id="breakdown-supervisor-row" class="py-3 flex justify-between items-center hidden">
+                                <div>
+                                    <span class="font-bold text-slate-700">行政主管職務加給</span>
+                                    <p class="text-[10px] text-slate-400">雙軌定額 +2,000 元後，再通案乘以 1.04</p>
+                                </div>
+                                <div class="text-right font-mono text-slate-600">
+                                    <span id="breakdown-old-supervisor">$0</span>
+                                    <i class="fa-solid fa-arrow-right mx-2 text-slate-300"></i>
+                                    <span class="font-bold text-slate-900" id="breakdown-new-supervisor">$0</span>
+                                </div>
+                            </div>
+
+                            <!-- Advisor & Special Ed -->
+                            <div id="breakdown-advisor-row" class="py-3 flex justify-between items-center hidden">
+                                <div>
+                                    <span class="font-bold text-slate-700">兼任導師費 (職務定額)</span>
+                                    <p class="text-[10px] text-slate-400">依教育法令不適用通案 4%，維持 $4,000 元</p>
+                                </div>
+                                <div class="text-right font-mono text-slate-900 font-bold">
+                                    $4,000
+                                </div>
+                            </div>
+
+                            <div id="breakdown-special-row" class="py-3 flex justify-between items-center hidden">
+                                <div>
+                                    <span class="font-bold text-slate-700">特殊教育津貼 (特別加給)</span>
+                                    <p class="text-[10px] text-slate-400">依各級特殊學校標準定額發放，維持 $2,800 元</p>
+                                </div>
+                                <div class="text-right font-mono text-slate-900 font-bold">
+                                    $2,800
+                                </div>
+                            </div>
+
+                            <!-- Deductions detailed table -->
+                            <div id="breakdown-deductions-panel" class="hidden bg-orange-50/40 p-4 rounded-xl mt-3 space-y-2 border border-orange-100/50">
+                                <h4 class="font-bold text-orange-950 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-calculator text-orange-600"></i> 116年新制應扣項目估算（每月自提）
+                                </h4>
+                                <div class="grid grid-cols-3 gap-2 text-[11px] text-slate-600 font-medium">
+                                    <div class="bg-white p-2 rounded-lg border border-orange-100">
+                                        <span class="text-slate-400 block mb-0.5">公保自提費 (估)</span>
+                                        <span class="font-bold text-slate-800 font-mono" id="dec-val-pub">-$0</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg border border-orange-100">
+                                        <span class="text-slate-400 block mb-0.5">退撫自撥額 (估)</span>
+                                        <span class="font-bold text-slate-800 font-mono" id="dec-val-pension">-$0</span>
+                                    </div>
+                                    <div class="bg-white p-2 rounded-lg border border-orange-100">
+                                        <span class="text-slate-400 block mb-0.5">健保自付費 (估)</span>
+                                        <span class="font-bold text-slate-800 font-mono" id="dec-val-health">-$0</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-[11px] font-bold text-orange-900 pt-1">
+                                    <span>合計扣除金額：</span>
+                                    <span id="dec-val-total">-$0 元</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB 2: OVERTIME HOURLY PAY ESTIMATOR -->
+        <div id="tab-hourly" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-600"></i> 教師兼課與超時授課鐘點費試算器
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">依教育部最新各級學校超時授課與代課鐘點費支給基準核發標準計算</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Left controls -->
+                    <div class="md:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200/50 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">選擇授課學制與職稱等級</label>
+                            <select id="hourly-level" onchange="calculateHourlyPay()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <optgroup label="🎒 高級中等以下學校">
+                                    <option value="elem" data-rate="405">國民小學教師 (每節 $405 元)</option>
+                                    <option value="junior" data-rate="455">國民中學教師 (每節 $455 元)</option>
+                                    <option value="senior" data-rate="505">高級中等學校教師 (每節 $505 元)</option>
+                                </optgroup>
+                                <optgroup label="🎓 大專校院公立大學 (日間授課鐘點)">
+                                    <option value="uni-lecturer" data-rate="630">大專講師 (每節 $630 元)</option>
+                                    <option value="uni-assistant" data-rate="715">大專助理教授 (每節 $715 元)</option>
+                                    <option value="uni-associate" data-rate="765">大專副教授 (每節 $765 元)</option>
+                                    <option value="uni-prof" data-rate="890" selected>大專教授 (每節 $890 元)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">每週兼課 / 超時授課節數</label>
+                            <div class="flex items-center gap-3">
+                                <input type="number" id="hourly-hours-per-week" oninput="calculateHourlyPay()" class="w-24 bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 text-center" value="4" min="0" max="30">
+                                <span class="text-xs text-slate-500 font-medium">節 / 堂（通常每週超時上限為 4-6 節）</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">估計學期授課週數</label>
+                            <select id="hourly-weeks" onchange="calculateHourlyPay()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none">
+                                <option value="18" selected>整學期 18 週 (正規上課標準)</option>
+                                <option value="16">16 週彈性學制</option>
+                                <option value="4">短期代課 4 週 (一個月)</option>
+                                <option value="1">單週代課試算 (1 週)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Right results -->
+                    <div class="md:col-span-7 bg-brand-50/30 rounded-2xl p-6 border border-brand-100 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <span class="bg-brand-100 text-brand-800 text-xs font-bold px-2.5 py-1 rounded-md">超時兼課津貼所得推算</span>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                    <span class="text-[10px] text-slate-400 font-bold block">每週兼課應領</span>
+                                    <span class="text-2xl font-black text-brand-800 font-mono" id="hourly-week-total">$0</span>
+                                    <span class="text-xs text-slate-500">元</span>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-brand-100">
+                                    <span class="text-[10px] text-slate-400 font-bold block">預估每月應領 (4週算)</span>
+                                    <span class="text-2xl font-black text-brand-800 font-mono" id="hourly-month-total">$0</span>
+                                    <span class="text-xs text-slate-500">元</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-xl border border-brand-100 flex justify-between items-center">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 font-bold block">整學期超時課所得 (依選取週數)</span>
+                                    <span class="text-xs text-slate-500">累計兼課總時數：<strong id="hourly-total-hours">72</strong> 節</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-3xl font-black text-brand-700 font-mono" id="hourly-term-total">$0</span>
+                                    <span class="text-xs text-slate-500 font-bold block">元 / 學期</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instruction Notes -->
+                        <div class="text-[11px] text-slate-500 leading-relaxed mt-4 bg-white/50 p-3 rounded-lg border border-slate-100">
+                            <strong>※ 法規小提醒：</strong>各級公立學校專任教師兼課、超時授課節數，每週併計以不超過「兼課 4 節」、「代課 4 節」為限（合共不超過 8 節）。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SEARCHABLE REFERENCE TABLE -->
+        <div id="tab-table" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">116年教師薪點與新制調幅完整對照表</h3>
+                        <p class="text-xs text-slate-500 mt-1">涵蓋 120 至 770 全薪點！系統支援即時關鍵字搜尋與體系篩選。點選任一列，可直接將該數據自動載入最上方試算器中。</p>
+                    </div>
+                </div>
+
+                <!-- Searching and Filtering bar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 mb-4">
+                    <!-- Search input -->
+                    <div class="relative md:col-span-6">
+                        <span class="absolute left-3 top-3 text-slate-400 text-sm">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="table-search" oninput="onTableSearch()" placeholder="快速搜尋薪點、關鍵字 (例如：245, 碩士, 學士)..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <!-- Education Track Filter -->
+                    <div class="md:col-span-6">
+                        <select id="filter-edu" onchange="filterTableByEdu()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none">
+                            <option value="all">-- 所有教育體系與起敘區間 --</option>
+                            <option value="bachelor">高級中等以下學士區間 (190~450點)</option>
+                            <option value="master">高級中等以下碩士區間 (245~525點)</option>
+                            <option value="phd">高級中等以下博士區間 (330~550點)</option>
+                            <option value="higher">大專校院與教授級別區間 (245~770點)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Database Table view -->
+                <div class="overflow-x-auto max-h-[600px] overflow-y-auto border border-slate-150 rounded-xl shadow-inner">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 text-xs font-bold text-slate-600 border-b border-slate-200">
+                            <tr>
+                                <th class="py-3.5 px-4 text-center">俸級薪點</th>
+                                <th class="py-3.5 px-4">114年舊本俸 (精確最新)</th>
+                                <th class="py-3.5 px-4">116年新本俸 (4% 累計)</th>
+                                <th class="py-3.5 px-4">114學術研究費</th>
+                                <th class="py-3.5 px-4">116新學術研究費 (雙軌)</th>
+                                <th class="py-3.5 px-4 text-center bg-slate-200/50 text-slate-800">114年應領月薪</th>
+                                <th class="py-3.5 px-4 text-center bg-brand-100 text-brand-900">116年新薪月領</th>
+                                <th class="py-3.5 px-4 text-center text-amber-900">實質增額 / 調幅</th>
+                            </tr>
+                        </thead>
+                        <tbody id="db-table-body" class="text-xs divide-y divide-slate-100 text-slate-700">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 p-4 bg-amber-50/50 border border-amber-100 rounded-xl space-y-2 text-xs text-slate-500 leading-relaxed">
+                    <div class="flex items-start gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-600 mt-0.5"></i>
+                        <p>
+                            <strong>操作小秘訣：</strong>點按表格內任一列，系統會自動將該薪點傳送至網頁最上方的「快速試算器」，您就能繼續搭配主管職加給、導師費或扣除額精算，體驗非常流暢！
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: OFFICIAL TIMELINE AND FAQS -->
+        <div id="tab-faq" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-brand-600"></i> 116年教師雙軌調薪：最新政策與實務問答
+                </h3>
+                
+                <div class="space-y-6">
+                    <!-- FAQ 1 -->
+                    <div class="border-b border-slate-100 pb-5">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2.5 flex items-start gap-2">
+                            <span class="bg-brand-100 text-brand-700 text-xs px-2 py-0.5 rounded-md mt-0.5 shrink-0">問</span>
+                            <span>什麼是「雙軌待遇提升方案」？兩階段如何生效？</span>
+                        </h4>
+                        <div class="pl-8 text-slate-600 text-xs leading-relaxed space-y-2">
+                            <p>本次 116 年度軍公教員工待遇提升方案，為行政院首度採取<strong>「先調高特定加給、再全面通案調薪」</strong>的雙軌新型態：</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>第一階段（定額加碼，提前追溯生效）</strong>：不分職等，教師的「學術研究加給」以及「主管職務加給」每個月直接定額**調增 2,000 元**。此定額部分提前於 **115 年 7 月 1 日起實施**。</li>
+                                <li><strong>第二階段（通案調薪 4%）</strong>：在 **116 年 1 月 1 日**，軍公教人員之（本俸）與（已調增2,000元後之各項加給），全面**調升 4%**（即乘以 1.04 倍）。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="border-b border-slate-100 pb-5">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2.5 flex items-start gap-2">
+                            <span class="bg-brand-100 text-brand-700 text-xs px-2 py-0.5 rounded-md mt-0.5 shrink-0">問</span>
+                            <span>我的退撫基金、公保與健保扣除額如何隨著調薪改變？</span>
+                        </h4>
+                        <div class="pl-8 text-slate-600 text-xs leading-relaxed">
+                            <p>當軍公教本俸調高 4% 時，依法定比例計算的個人扣減項目也會隨之增加。其中：</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-1.5">
+                                <li><strong>公保自撥費</strong>：為本俸 × 保險費率（現行約 8.83%）× 自付比例 35%。本俸調升 4% 後，公保自提費用會多增幾十元至百元不等。</li>
+                                <li><strong>退撫基金提存額</strong>：舊制退撫基金提撥率為本俸之 2 倍 × 提撥率（現行 15%）× 自付 35%（合計為本俸的 10.5%）。當本俸調整 4%，退撫自提扣減也跟著等比例微增。</li>
+                                <li><strong>全民健保費</strong>：健保投保等級是根據「本俸 + 專業加給 + 主管加給」合計的薪資，對應到最接近的投保分級。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="border-b border-slate-100 pb-5">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2.5 flex items-start gap-2">
+                            <span class="bg-brand-100 text-brand-700 text-xs px-2 py-0.5 rounded-md mt-0.5 shrink-0">問</span>
+                            <span>未具合格教師證的「代理教師」也能享有雙軌調薪待遇嗎？</span>
+                        </h4>
+                        <div class="pl-8 text-slate-600 text-xs leading-relaxed">
+                            <p><strong>可以！</strong> 代理教師比照正式教師薪俸級別支給本俸。至於學術研究加給部分：</p>
+                            <ul class="list-disc pl-5 space-y-1 mt-1">
+                                <li>具合格教師證之代理教師：比照正式教師享有完整學術加給與本次雙軌調增 2,000 元再乘 1.04。</li>
+                                <li>未具合格證之代理教師：依規定其學術加給按 80% 支給。計算時會將該薪級基礎打 8 折後，同步再加上第一階段的 2,000 元定額加碼，並在第二階段同樣乘以 1.04，在保障教育公平上也有大幅度所得改善。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-center text-xs">
+        <div class="max-w-6xl mx-auto px-4 space-y-3">
+            <p class="font-bold text-slate-300">116年教師調薪全方位快速試算與對照系統 &copy; 2026 教育待遇精算工具網</p>
+            <p class="text-slate-500 max-w-3xl mx-auto leading-relaxed">
+                本網頁為提供教育人員福利及所得待遇精估之公益型試算工具。實際月俸給金額仍應以各校出納室之核薪單、立法院預算審查最終結果為準。
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Updated and validated 114 standard teacher database (Post 113 +4% and 114 +3% adjustments)
+        const TEACHER_DATABASE = [
+            { pt: 120, base114: 19690, label: "120 薪點 (高中以下起敘點)" },
+            { pt: 130, base114: 20460, label: "130 薪點" },
+            { pt: 140, base114: 21220, label: "140 薪點" },
+            { pt: 150, base114: 21990, label: "150 薪點 (幼兒園教師初任級)" },
+            { pt: 160, base114: 22750, label: "160 薪點 (專科起敘點)" },
+            { pt: 170, base114: 23520, label: "170 薪點" },
+            { pt: 180, base114: 24290, label: "180 薪點" },
+            { pt: 190, base114: 25050, label: "190 薪點 (學士學位初任教師起敘)" },
+            { pt: 200, base114: 25820, label: "200 薪點" },
+            { pt: 210, base114: 26580, label: "210 薪點" },
+            { pt: 220, base114: 27350, label: "220 薪點" },
+            { pt: 230, base114: 28120, label: "230 薪點" },
+            { pt: 245, base114: 29270, label: "245 薪點 (碩士初敘 / 學士本薪上限)" },
+            { pt: 260, base114: 30410, label: "260 薪點" },
+            { pt: 275, base114: 31560, label: "275 薪點" },
+            { pt: 290, base114: 32710, label: "290 薪點" },
+            { pt: 310, base114: 33860, label: "310 薪點 (大專助理教授本薪起敘)" },
+            { pt: 330, base114: 35010, label: "330 薪點 (博士初敘 / 碩士本薪上限)" },
+            { pt: 350, base114: 36160, label: "350 薪點" },
+            { pt: 370, base114: 37310, label: "370 薪點" },
+            { pt: 390, base114: 38460, label: "390 薪點 (大專副教授本薪起敘)" },
+            { pt: 410, base114: 39610, label: "410 薪點" },
+            { pt: 430, base114: 40760, label: "430 薪點" },
+            { pt: 450, base114: 41900, label: "450 薪點 (學士學位年功頂格)" },
+            { pt: 475, base114: 44970, label: "475 薪點 (大專教授本薪起敘)" },
+            { pt: 500, base114: 46500, label: "500 薪點" },
+            { pt: 525, base114: 48030, label: "525 薪點 (碩士學位年功頂格)" },
+            { pt: 550, base114: 49560, label: "550 薪點 (博士學位年功頂格)" },
+            { pt: 575, base114: 51100, label: "575 薪點" },
+            { pt: 600, base114: 52630, label: "600 薪點" },
+            { pt: 625, base114: 54160, label: "625 薪點" },
+            { pt: 650, base114: 55690, label: "650 薪點" },
+            { pt: 680, base114: 57220, label: "680 薪點 (中小學教師最高頂格)" },
+            { pt: 710, base114: 59520, label: "710 薪點" },
+            { pt: 740, base114: 60290, label: "740 薪點" },
+            { pt: 770, base114: 63570, label: "770 薪點 (大專教授年功頂格)" }
+        ];
+
+        // Detailed teacher presets
+        const PRESETS = {
+            'custom': { pt: 190, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "自訂教師薪點" },
+            'bachelor-start': { pt: 190, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "學士學位初任教師 (190薪點)" },
+            'master-start': { pt: 245, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "碩士學位初任教師 (245薪點)" },
+            'phd-start': { pt: 330, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "博士學位初任教師 (330薪點)" },
+            'bachelor-max': { pt: 245, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: true, special: false, surrogate: false, name: "學士最高本薪級 (245薪點 + 兼導師)" },
+            'master-max': { pt: 330, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: true, special: false, surrogate: false, name: "碩士最高本薪級 (330薪點 + 兼導師)" },
+            'senior-k12': { pt: 650, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "資深中小學教師 (650薪點)" },
+            'top-k12': { pt: 680, level: 'k12', supervisor: 0, hasSupervisor: false, advisor: true, special: false, surrogate: false, name: "K-12頂格教師 (680薪點 + 兼導師)" },
+            'lecturer-start': { pt: 245, level: 'higher', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "大專講師初敘 (245薪點)" },
+            'assistant-prof': { pt: 310, level: 'higher', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "大專助理教授初敘 (310薪點)" },
+            'associate-prof': { pt: 390, level: 'higher', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "大專副教授初敘 (390薪點)" },
+            'professor-start': { pt: 475, level: 'higher', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "大專教授初敘 (475薪點)" },
+            'professor-top': { pt: 770, level: 'higher', supervisor: 0, hasSupervisor: false, advisor: false, special: false, surrogate: false, name: "教授最高級頂格 (770薪點)" }
+        };
+
+        // State management
+        let currentSchoolLevel = 'k12';
+        let isManualResearch = false;
+
+        // Tab switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.replace('block', 'hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-brand-600', 'text-brand-700');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.replace('hidden', 'block');
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            activeBtn.classList.remove('border-transparent', 'text-slate-500');
+            activeBtn.classList.add('border-brand-600', 'text-brand-700');
+        }
+
+        // Initialize dynamic grade dropdowns
+        function initPointSelect() {
+            const selectEl = document.getElementById('input-point');
+            selectEl.innerHTML = '';
+            TEACHER_DATABASE.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.pt;
+                opt.innerText = item.label;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        // Fetch Academic Research Allowances base on Taiwan Year 114 official criteria
+        function getAcademicAllowance114(pt, level) {
+            if (level === 'higher') {
+                if (pt >= 475) return 73800;      // Professor (教授)
+                if (pt >= 390) return 56960;      // Associate Professor (副教授)
+                if (pt >= 310) return 49860;      // Assistant Professor (助理教授)
+                return 35580;                     // Lecturer (講師)
+            } else {
+                if (pt >= 475) return 35780;      // K-12 Standard 4-Tier Scale
+                if (pt >= 350) return 30140;
+                if (pt >= 245) return 26560;
+                return 23080;
+            }
+        }
+
+        // Set active school level
+        function setSchoolLevel(level) {
+            currentSchoolLevel = level;
+            const k12Btn = document.getElementById('level-k12-btn');
+            const higherBtn = document.getElementById('level-higher-btn');
+            const surrogateGroup = document.getElementById('surrogate-group');
+
+            if (level === 'k12') {
+                k12Btn.className = "py-2.5 text-xs font-bold rounded-lg bg-white text-brand-800 shadow-sm transition-all flex items-center justify-center gap-1.5";
+                higherBtn.className = "py-2.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-1.5";
+                surrogateGroup.classList.remove('hidden');
+            } else {
+                higherBtn.className = "py-2.5 text-xs font-bold rounded-lg bg-white text-brand-800 shadow-sm transition-all flex items-center justify-center gap-1.5";
+                k12Btn.className = "py-2.5 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-1.5";
+                surrogateGroup.classList.add('hidden');
+                document.getElementById('check-surrogate').checked = false;
+            }
+
+            // Sync automatically if manual override is inactive
+            if (!isManualResearch) {
+                const pt = parseInt(document.getElementById('input-point').value);
+                const allowance = getAcademicAllowance114(pt, level);
+                document.getElementById('input-research').value = allowance;
+                updateResearchInfo(pt, level);
+            }
+
+            calculateSalary();
+        }
+
+        // Toggle Manual research input fields
+        function toggleManualResearch() {
+            isManualResearch = document.getElementById('check-manual-research').checked;
+            const inputResearch = document.getElementById('input-research');
+            if (isManualResearch) {
+                inputResearch.removeAttribute('readonly');
+                inputResearch.classList.replace('bg-slate-100', 'bg-white');
+            } else {
+                inputResearch.setAttribute('readonly', 'true');
+                inputResearch.classList.replace('bg-white', 'bg-slate-100');
+                const pt = parseInt(document.getElementById('input-point').value);
+                const allowance = getAcademicAllowance114(pt, currentSchoolLevel);
+                inputResearch.value = allowance;
+                updateResearchInfo(pt, currentSchoolLevel);
+            }
+            calculateSalary();
+        }
+
+        function onResearchManualInput() {
+            if (isManualResearch) {
+                calculateSalary();
+            }
+        }
+
+        // Triggers when selecting point
+        function onPointChange() {
+            const ptVal = parseInt(document.getElementById('input-point').value);
+            const data = TEACHER_DATABASE.find(item => item.pt === ptVal);
+            if (data) {
+                document.getElementById('old-base-hint').innerText = `$${formatNumber(data.base114)}`;
+                document.getElementById('new-base-hint').innerText = `$${formatNumber(Math.round(data.base114 * 1.04))}`;
+                
+                if (!isManualResearch) {
+                    const allowance = getAcademicAllowance114(ptVal, currentSchoolLevel);
+                    document.getElementById('input-research').value = allowance;
+                    updateResearchInfo(ptVal, currentSchoolLevel);
+                }
+            }
+
+            // Sync preset options
+            const presetVal = document.getElementById('preset-select').value;
+            if (presetVal !== 'custom') {
+                const preset = PRESETS[presetVal];
+                if (preset && preset.pt !== ptVal) {
+                    document.getElementById('preset-select').value = 'custom';
+                    document.getElementById('rank-badge-text').innerText = "自訂教師薪點試算";
+                }
+            }
+
+            calculateSalary();
+        }
+
+        function updateResearchInfo(pt, level) {
+            const textEl = document.getElementById('research-info-text');
+            if (level === 'higher') {
+                if (pt >= 475) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-blue-500"></i> 對應大專院校【教授】級別加給 ($73,800)`;
+                else if (pt >= 390) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-blue-500"></i> 對應大專院校【副教授】級別加給 ($56,960)`;
+                else if (pt >= 310) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-blue-500"></i> 對應大專院校【助理教授】級別加給 ($49,860)`;
+                else textEl.innerHTML = `<i class="fa-solid fa-circle-info text-blue-500"></i> 對應大專院校【講師/助教】級別加給 ($35,580)`;
+            } else {
+                if (pt >= 475) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-brand-600"></i> 對應 K-12【475點以上】加給級距 ($35,780)`;
+                else if (pt >= 350) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-brand-600"></i> 對應 K-12【350~450點】加給級距 ($30,140)`;
+                else if (pt >= 245) textEl.innerHTML = `<i class="fa-solid fa-circle-info text-brand-600"></i> 對應 K-12【245~330點】加給級距 ($26,560)`;
+                else textEl.innerHTML = `<i class="fa-solid fa-circle-info text-brand-600"></i> 對應 K-12【230點以下】加給級距 ($23,080)`;
+            }
+        }
+
+        // Toggle Supervisor section
+        function toggleSupervisor() {
+            const isSupervisor = document.getElementById('check-supervisor').checked;
+            const selectGroup = document.getElementById('supervisor-select-group');
+            const row = document.getElementById('breakdown-supervisor-row');
+
+            if (isSupervisor) {
+                selectGroup.classList.remove('hidden');
+                row.classList.remove('hidden');
+            } else {
+                selectGroup.classList.add('hidden');
+                row.classList.add('hidden');
+                document.getElementById('input-supervisor').value = 0;
+                document.getElementById('supervisor-preset').value = 'custom';
+            }
+            calculateSalary();
+        }
+
+        function applySupervisorPreset() {
+            const val = document.getElementById('supervisor-preset').value;
+            const map = {
+                'principal-high': 13110,
+                'principal-elem': 9710,
+                'director': 7520,
+                'section-chief-high': 5750,
+                'section-chief-mid': 4720,
+                'section-chief-low': 4190,
+                'custom': 0
+            };
+            if (val !== 'custom') {
+                document.getElementById('input-supervisor').value = map[val];
+            }
+            calculateSalary();
+        }
+
+        // Toggles for advanced practical modules
+        function onDeductionToggle() {
+            const checked = document.getElementById('check-deductions').checked;
+            const group = document.getElementById('deductions-info-group');
+            const panel = document.getElementById('breakdown-deductions-panel');
+            const badge = document.getElementById('calc-net-badge-text');
+
+            if (checked) {
+                group.classList.remove('hidden');
+                panel.classList.remove('hidden');
+                badge.innerText = "目前顯示：已扣除應扣公保/退撫/健保之「實領入帳薪資」";
+            } else {
+                group.classList.add('hidden');
+                panel.classList.add('hidden');
+                badge.innerText = "目前顯示：未扣款應領總薪資";
+            }
+            calculateSalary();
+        }
+
+        function onAnnualToggle() {
+            const checked = document.getElementById('check-annual').checked;
+            const group = document.getElementById('annual-info-group');
+            const block = document.getElementById('annual-results-block');
+
+            if (checked) {
+                group.classList.remove('hidden');
+                block.classList.remove('hidden');
+            } else {
+                group.classList.add('hidden');
+                block.classList.add('hidden');
+            }
+            calculateSalary();
+        }
+
+        // Core salary calculator engine
+        function calculateSalary() {
+            const ptVal = parseInt(document.getElementById('input-point').value);
+            const dbItem = TEACHER_DATABASE.find(item => item.pt === ptVal);
+            if (!dbItem) return;
+
+            // 1. Core Variables (Corrected 114 baseline)
+            const base114 = dbItem.base114;
+            const rawResearch = parseFloat(document.getElementById('input-research').value) || 0;
+            
+            // Uncertified surrogate modifier
+            const isSurrogate = document.getElementById('check-surrogate').checked && currentSchoolLevel === 'k12';
+            const research114 = isSurrogate ? Math.round(rawResearch * 0.8) : rawResearch;
+
+            // Supervisor values
+            const hasSupervisor = document.getElementById('check-supervisor').checked;
+            const supervisor114 = hasSupervisor ? (parseFloat(document.getElementById('input-supervisor').value) || 0) : 0;
+
+            // Flat-rate allowances
+            const hasAdvisor = document.getElementById('check-advisor').checked;
+            const advisorAmount = hasAdvisor ? 4000 : 0;
+
+            const hasSpecial = document.getElementById('check-special-ed').checked;
+            const specialAmount = hasSpecial ? 2800 : 0;
+
+            // 2. Compute 114 standard totals
+            const total114 = base114 + research114 + supervisor114 + advisorAmount + specialAmount;
+
+            // 3. Compute 115 Stage 1 (定額提前調升)
+            const research115 = research114 + 2000;
+            const supervisor115 = hasSupervisor ? (supervisor114 + 2000) : 0;
+            const total115 = base114 + research115 + supervisor115 + advisorAmount + specialAmount;
+
+            // 4. Compute 116 New Double-Track Scheme (通案 +4%)
+            const base116 = Math.round(base114 * 1.04);
+            const research116 = Math.round(research115 * 1.04);
+            const supervisor116 = hasSupervisor ? Math.round(supervisor115 * 1.04) : 0;
+
+            const total116 = base116 + research116 + supervisor116 + advisorAmount + specialAmount;
+
+            // 5. Deductions Computations
+            let deductionTotalOld = 0;
+            let deductionTotalNew = 0;
+            
+            let pubOld = 0, pensionOld = 0, healthOld = 0;
+            let pubNew = 0, pensionNew = 0, healthNew = 0;
+
+            if (document.getElementById('check-deductions').checked) {
+                pubOld = Math.round(base114 * 0.0883 * 0.35);
+                pubNew = Math.round(base116 * 0.0883 * 0.35);
+
+                pensionOld = Math.round(base114 * 0.105);
+                pensionNew = Math.round(base116 * 0.105);
+
+                healthOld = Math.round(total114 * 0.0135);
+                healthNew = Math.round(total116 * 0.0135);
+
+                deductionTotalOld = pubOld + pensionOld + healthOld;
+                deductionTotalNew = pubNew + pensionNew + healthNew;
+
+                document.getElementById('dec-val-pub').innerText = `-$${formatNumber(pubNew)}`;
+                document.getElementById('dec-val-pension').innerText = `-$${formatNumber(pensionNew)}`;
+                document.getElementById('dec-val-health').innerText = `-$${formatNumber(healthNew)}`;
+                document.getElementById('dec-val-total').innerText = `-$${formatNumber(deductionTotalNew)} 元`;
+            }
+
+            // Actual displayed sums
+            const finalOld = total114 - deductionTotalOld;
+            const finalNew = total116 - deductionTotalNew;
+
+            const diffAmount = finalNew - finalOld;
+            const pctGrowth = finalOld > 0 ? ((diffAmount / finalOld) * 100).toFixed(2) : '0.00';
+
+            // DOM rendering
+            document.getElementById('total-old').innerText = formatNumber(finalOld);
+            document.getElementById('total-new').innerText = formatNumber(finalNew);
+            document.getElementById('diff-amount').innerText = formatNumber(diffAmount);
+            document.getElementById('total-pct').innerText = pctGrowth + '%';
+
+            if (hasAdvisor) document.getElementById('breakdown-advisor-row').classList.remove('hidden');
+            else document.getElementById('breakdown-advisor-row').classList.add('hidden');
+
+            if (hasSpecial) document.getElementById('breakdown-special-row').classList.remove('hidden');
+            else document.getElementById('breakdown-special-row').classList.add('hidden');
+
+            // Render details lists
+            document.getElementById('breakdown-old-base').innerText = `$${formatNumber(base114)}`;
+            document.getElementById('breakdown-new-base').innerText = `$${formatNumber(base116)}`;
+            document.getElementById('breakdown-old-research').innerText = `$${formatNumber(research114)}`;
+            document.getElementById('breakdown-new-research').innerText = `$${formatNumber(research116)}`;
+            
+            if (hasSupervisor) {
+                document.getElementById('breakdown-old-supervisor').innerText = `$${formatNumber(supervisor114)}`;
+                document.getElementById('breakdown-new-supervisor').innerText = `$${formatNumber(supervisor116)}`;
+            }
+
+            // Annualized total rewards analysis
+            if (document.getElementById('check-annual').checked) {
+                const yearEndMonths = parseFloat(document.getElementById('input-year-end-months').value) || 0;
+                const evalMonths = parseFloat(document.getElementById('input-evaluation-months').value) || 0;
+                const totalBonusMonths = yearEndMonths + evalMonths;
+
+                document.getElementById('bonus-months-label').innerText = `${yearEndMonths}個月年終 + ${evalMonths}個月考核`;
+
+                const oldBaseBonusBase = base114 + research114 + supervisor114;
+                const newBaseBonusBase = base116 + research116 + supervisor116;
+
+                const annualGrossOld = (total114 * 12) + (oldBaseBonusBase * totalBonusMonths);
+                const annualGrossNew = (total116 * 12) + (newBaseBonusBase * totalBonusMonths);
+
+                const annualNetOld = annualGrossOld - (deductionTotalOld * 12);
+                const annualNetNew = annualGrossNew - (deductionTotalNew * 12);
+
+                const annualDiff = annualNetNew - annualNetOld;
+                document.getElementById('annual-diff-amount').innerText = `+ $${formatNumber(annualDiff)}`;
+            }
+
+            // Sync visual stages graph
+            document.getElementById('progress-val-a').innerText = `$${formatNumber(total114 - deductionTotalOld)}`;
+            document.getElementById('progress-val-b').innerText = `$${formatNumber(total115 - deductionTotalOld)}`;
+            document.getElementById('progress-val-c').innerText = `$${formatNumber(total116 - deductionTotalNew)}`;
+
+            const maxVal = Math.max(total114, total115, total116);
+            if (maxVal > 0) {
+                document.getElementById('progress-bar-a').style.width = `${((total114 - deductionTotalOld) / maxVal) * 100}%`;
+                document.getElementById('progress-bar-b').style.width = `${((total115 - deductionTotalOld) / maxVal) * 100}%`;
+                document.getElementById('progress-bar-c').style.width = `${((total116 - deductionTotalNew) / maxVal) * 100}%`;
+            }
+        }
+
+        // Apply presets dropdowns
+        function applyPreset() {
+            const val = document.getElementById('preset-select').value;
+            const preset = PRESETS[val];
+            if (!preset) return;
+
+            document.getElementById('input-point').value = preset.pt;
+            document.getElementById('check-advisor').checked = preset.advisor;
+            document.getElementById('check-special-ed').checked = preset.special;
+            document.getElementById('check-surrogate').checked = preset.surrogate;
+
+            setSchoolLevel(preset.level);
+
+            document.getElementById('check-supervisor').checked = preset.hasSupervisor;
+            toggleSupervisor();
+            if (preset.hasSupervisor) {
+                if (preset.pt >= 650) {
+                    document.getElementById('supervisor-preset').value = 'principal-high';
+                } else if (preset.pt >= 475) {
+                    document.getElementById('supervisor-preset').value = 'director';
+                } else {
+                    document.getElementById('supervisor-preset').value = 'section-chief-mid';
+                }
+                applySupervisorPreset();
+            }
+
+            document.getElementById('rank-badge-text').innerText = preset.name;
+            onPointChange();
+        }
+
+        // Render comprehensive searchable table data
+        function renderTableRows(filterType = 'all', searchQuery = '') {
+            const tableBody = document.getElementById('db-table-body');
+            tableBody.innerHTML = '';
+            
+            const normalizedSearch = searchQuery.trim().toLowerCase();
+
+            TEACHER_DATABASE.forEach(item => {
+                // Apply education levels filters
+                if (filterType === 'bachelor' && (item.pt < 190 || item.pt > 450)) return;
+                if (filterType === 'master' && (item.pt < 245 || item.pt > 525)) return;
+                if (filterType === 'phd' && (item.pt < 330 || item.pt > 550)) return;
+                if (filterType === 'higher' && item.pt < 245) return; // For Higher-Ed presets from lecturer up to professor
+
+                // Match with Search Keywords
+                if (normalizedSearch !== '') {
+                    const matchesPt = item.pt.toString().includes(normalizedSearch);
+                    const matchesLabel = item.label.toLowerCase().includes(normalizedSearch);
+                    let matchesEducation = false;
+                    if (normalizedSearch.includes('學士') && item.pt >= 190 && item.pt <= 450) matchesEducation = true;
+                    if (normalizedSearch.includes('碩士') && item.pt >= 245 && item.pt <= 525) matchesEducation = true;
+                    if (normalizedSearch.includes('博士') && item.pt >= 330 && item.pt <= 550) matchesEducation = true;
+                    if (normalizedSearch.includes('大專') && item.pt >= 245) matchesEducation = true;
+
+                    if (!matchesPt && !matchesLabel && !matchesEducation) return;
+                }
+
+                // Standard baseline values
+                const base114 = item.base114;
+                const newBase = Math.round(base114 * 1.04);
+                
+                const isHigherRange = filterType === 'higher' || item.pt >= 550;
+                const research114 = getAcademicAllowance114(item.pt, isHigherRange ? 'higher' : 'k12');
+                const newResearch = Math.round((research114 + 2000) * 1.04);
+
+                const total114 = base114 + research114;
+                const total116 = newBase + newResearch;
+                const diff = total116 - total114;
+                const pct = ((diff / total114) * 100).toFixed(2);
+
+                const row = document.createElement('tr');
+                row.className = "hover:bg-brand-50/50 transition duration-150 cursor-pointer border-b border-slate-100";
+                row.onclick = () => {
+                    document.getElementById('preset-select').value = 'custom';
+                    document.getElementById('input-point').value = item.pt;
+                    setSchoolLevel(isHigherRange ? 'higher' : 'k12');
+                    onPointChange();
+                    switchTab('calc');
+                    window.scrollTo({ top: 120, behavior: 'smooth' });
+                };
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-slate-900 text-center">${item.pt}薪點</td>
+                    <td class="py-3 px-4 text-slate-800 font-bold font-mono">$${formatNumber(base114)}</td>
+                    <td class="py-3 px-4 text-slate-800 font-bold font-mono">$${formatNumber(newBase)}</td>
+                    <td class="py-3 px-4 text-slate-500 font-mono">$${formatNumber(research114)}</td>
+                    <td class="py-3 px-4 text-slate-800 font-bold font-mono">$${formatNumber(newResearch)}</td>
+                    <td class="py-3 px-4 text-center font-semibold text-slate-500 bg-slate-100/30 font-mono">$${formatNumber(total114)}</td>
+                    <td class="py-3 px-4 text-center font-bold text-brand-700 bg-brand-50/50 font-mono">$${formatNumber(total116)}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="text-brand-600 font-bold font-mono block">+$${formatNumber(diff)}</span>
+                        <span class="text-[10px] bg-brand-100 text-brand-800 px-1.5 py-0.5 rounded-full font-extrabold font-mono">${pct}%</span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function filterTableByEdu() {
+            const val = document.getElementById('filter-edu').value;
+            const searchVal = document.getElementById('table-search').value;
+            renderTableRows(val, searchVal);
+        }
+
+        function onTableSearch() {
+            const val = document.getElementById('filter-edu').value;
+            const searchVal = document.getElementById('table-search').value;
+            renderTableRows(val, searchVal);
+        }
+
+        // Hourly substitute calculation logic
+        function calculateHourlyPay() {
+            const selectEl = document.getElementById('hourly-level');
+            const selectedOpt = selectEl.options[selectEl.selectedIndex];
+            const rate = parseFloat(selectedOpt.getAttribute('data-rate'));
+            
+            const hoursPerWeek = parseFloat(document.getElementById('hourly-hours-per-week').value) || 0;
+            const weeks = parseInt(document.getElementById('hourly-weeks').value) || 0;
+
+            const totalHours = hoursPerWeek * weeks;
+            const weekTotal = rate * hoursPerWeek;
+            const monthTotal = weekTotal * 4;
+            const termTotal = rate * totalHours;
+
+            document.getElementById('hourly-week-total').innerText = `$${formatNumber(weekTotal)}`;
+            document.getElementById('hourly-month-total').innerText = `$${formatNumber(monthTotal)}`;
+            document.getElementById('hourly-total-hours').innerText = totalHours;
+            document.getElementById('hourly-term-total').innerText = `$${formatNumber(termTotal)}`;
+        }
+
+        // Helper: Format integers with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\n))/g, ",");
+        }
+
+        // Page load initializations
+        window.onload = function() {
+            initPointSelect();
+            renderTableRows('all');
+            
+            // Default load
+            document.getElementById('preset-select').value = 'bachelor-start';
+            applyPreset();
+            calculateHourlyPay();
+        };
+    </script>
+</body>
+</html>
