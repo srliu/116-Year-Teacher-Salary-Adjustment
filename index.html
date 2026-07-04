@@ -612,8 +612,18 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">116年教師薪點與新制調幅完整對照表</h3>
-                        <p class="text-xs text-slate-500 mt-1">涵蓋 120 至 770 全薪點！系統支援即時關鍵字搜尋與體系篩選。點選任一列，可直接將該數據自動載入最上方試算器中。</p>
+                        <p class="text-xs text-slate-500 mt-1">涵蓋 120 至 770 全薪點！請先選取對應學制體系，以獲得最正確的學術研究加給數據。點擊任一列可快速載入最上方試算器。</p>
                     </div>
+                </div>
+
+                <!-- System Toggle Tab Bar for Table Accuracy -->
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-4 max-w-md gap-1">
+                    <button id="table-tab-k12" onclick="setTableSystem('k12')" class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg bg-brand-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-school"></i> 中等以下學校 (120-680點)
+                    </button>
+                    <button id="table-tab-higher" onclick="setTableSystem('higher')" class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg text-slate-500 hover:bg-white/50 transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-graduation-cap"></i> 大專校院教研 (245-770點)
+                    </button>
                 </div>
 
                 <!-- Searching and Filtering bar -->
@@ -623,16 +633,12 @@
                         <span class="absolute left-3 top-3 text-slate-400 text-sm">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
-                        <input type="text" id="table-search" oninput="onTableSearch()" placeholder="快速搜尋薪點、關鍵字 (例如：245, 碩士, 學士)..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <input type="text" id="table-search" oninput="onTableSearch()" placeholder="快速搜尋薪點 (如：245)..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                     <!-- Education Track Filter -->
                     <div class="md:col-span-6">
-                        <select id="filter-edu" onchange="filterTableByEdu()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none">
-                            <option value="all">-- 所有教育體系與起敘區間 --</option>
-                            <option value="bachelor">高級中等以下學士區間 (190~450點)</option>
-                            <option value="master">高級中等以下碩士區間 (245~525點)</option>
-                            <option value="phd">高級中等以下博士區間 (330~550點)</option>
-                            <option value="higher">大專校院與教授級別區間 (245~770點)</option>
+                        <select id="filter-edu" onchange="onTableSearch()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none">
+                            <!-- Dynamically populated via JS -->
                         </select>
                     </div>
                 </div>
@@ -800,6 +806,7 @@
         // State management
         let currentSchoolLevel = 'k12';
         let isManualResearch = false;
+        let currentTableSystem = 'k12'; // 'k12' or 'higher' for the reference table
 
         // Tab switcher
         function switchTab(tabId) {
@@ -1169,39 +1176,88 @@
             onPointChange();
         }
 
+        // Reference table controller functions
+        function setTableSystem(system) {
+            currentTableSystem = system;
+            
+            const k12Tab = document.getElementById('table-tab-k12');
+            const higherTab = document.getElementById('table-tab-higher');
+            
+            if (system === 'k12') {
+                k12Tab.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg bg-brand-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5";
+                higherTab.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg text-slate-500 hover:bg-white/50 transition-all flex items-center justify-center gap-1.5";
+            } else {
+                higherTab.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg bg-brand-600 text-white shadow-sm transition-all flex items-center justify-center gap-1.5";
+                k12Tab.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg text-slate-500 hover:bg-white/50 transition-all flex items-center justify-center gap-1.5";
+            }
+            
+            updateFilterOptions();
+            onTableSearch();
+        }
+
+        // Dynamically update qualification dropdown options based on selected system
+        function updateFilterOptions() {
+            const filterEdu = document.getElementById('filter-edu');
+            filterEdu.innerHTML = '';
+            
+            if (currentTableSystem === 'k12') {
+                filterEdu.innerHTML = `
+                    <option value="all">-- 所有教育體系與起敘區間 --</option>
+                    <option value="bachelor">高級中等以下學士區間 (190~450點)</option>
+                    <option value="master">高級中等以下碩士區間 (245~525點)</option>
+                    <option value="phd">高級中等以下博士區間 (330~550點)</option>
+                `;
+            } else {
+                filterEdu.innerHTML = `
+                    <option value="all">-- 所有大專教研級別區間 --</option>
+                    <option value="lecturer">大專講師級別 (245~450點)</option>
+                    <option value="assistant-prof">大專助理教授級別 (310~525點)</option>
+                    <option value="associate-prof">大專副教授級別 (390~650點)</option>
+                    <option value="professor">大專教授級別 (475~770點)</option>
+                `;
+            }
+        }
+
         // Render comprehensive searchable table data
-        function renderTableRows(filterType = 'all', searchQuery = '') {
+        function renderTableRows(searchQuery = '') {
             const tableBody = document.getElementById('db-table-body');
             tableBody.innerHTML = '';
             
             const normalizedSearch = searchQuery.trim().toLowerCase();
+            const filterEduVal = document.getElementById('filter-edu').value;
 
             TEACHER_DATABASE.forEach(item => {
-                // Apply education levels filters
-                if (filterType === 'bachelor' && (item.pt < 190 || item.pt > 450)) return;
-                if (filterType === 'master' && (item.pt < 245 || item.pt > 525)) return;
-                if (filterType === 'phd' && (item.pt < 330 || item.pt > 550)) return;
-                if (filterType === 'higher' && item.pt < 245) return; // For Higher-Ed presets from lecturer up to professor
+                // 1. Filter by active table system (K-12 vs 大專) range limits
+                if (currentTableSystem === 'k12') {
+                    if (item.pt > 680) return; // K12 maximum point limit
+                    
+                    // Specific K-12 range filters
+                    if (filterEduVal === 'bachelor' && (item.pt < 190 || item.pt > 450)) return;
+                    if (filterEduVal === 'master' && (item.pt < 245 || item.pt > 525)) return;
+                    if (filterEduVal === 'phd' && (item.pt < 330 || item.pt > 550)) return;
+                } else {
+                    if (item.pt < 245) return; // Lecturer start point limit
+                    
+                    // Specific Higher-Ed range filters
+                    if (filterEduVal === 'lecturer' && (item.pt < 245 || item.pt > 450)) return;
+                    if (filterEduVal === 'assistant-prof' && (item.pt < 310 || item.pt > 525)) return;
+                    if (filterEduVal === 'associate-prof' && (item.pt < 390 || item.pt > 650)) return;
+                    if (filterEduVal === 'professor' && (item.pt < 475 || item.pt > 770)) return;
+                }
 
-                // Match with Search Keywords
+                // 2. Filter by search query
                 if (normalizedSearch !== '') {
                     const matchesPt = item.pt.toString().includes(normalizedSearch);
                     const matchesLabel = item.label.toLowerCase().includes(normalizedSearch);
-                    let matchesEducation = false;
-                    if (normalizedSearch.includes('學士') && item.pt >= 190 && item.pt <= 450) matchesEducation = true;
-                    if (normalizedSearch.includes('碩士') && item.pt >= 245 && item.pt <= 525) matchesEducation = true;
-                    if (normalizedSearch.includes('博士') && item.pt >= 330 && item.pt <= 550) matchesEducation = true;
-                    if (normalizedSearch.includes('大專') && item.pt >= 245) matchesEducation = true;
-
-                    if (!matchesPt && !matchesLabel && !matchesEducation) return;
+                    if (!matchesPt && !matchesLabel) return;
                 }
 
                 // Standard baseline values
                 const base114 = item.base114;
                 const newBase = Math.round(base114 * 1.04);
                 
-                const isHigherRange = filterType === 'higher' || item.pt >= 550;
-                const research114 = getAcademicAllowance114(item.pt, isHigherRange ? 'higher' : 'k12');
+                // Fetch perfectly matched academic allowance (No leaking high-points to Higher-Ed!)
+                const research114 = getAcademicAllowance114(item.pt, currentTableSystem);
                 const newResearch = Math.round((research114 + 2000) * 1.04);
 
                 const total114 = base114 + research114;
@@ -1214,7 +1270,7 @@
                 row.onclick = () => {
                     document.getElementById('preset-select').value = 'custom';
                     document.getElementById('input-point').value = item.pt;
-                    setSchoolLevel(isHigherRange ? 'higher' : 'k12');
+                    setSchoolLevel(currentTableSystem);
                     onPointChange();
                     switchTab('calc');
                     window.scrollTo({ top: 120, behavior: 'smooth' });
@@ -1237,16 +1293,9 @@
             });
         }
 
-        function filterTableByEdu() {
-            const val = document.getElementById('filter-edu').value;
-            const searchVal = document.getElementById('table-search').value;
-            renderTableRows(val, searchVal);
-        }
-
         function onTableSearch() {
-            const val = document.getElementById('filter-edu').value;
             const searchVal = document.getElementById('table-search').value;
-            renderTableRows(val, searchVal);
+            renderTableRows(searchVal);
         }
 
         // Hourly substitute calculation logic
@@ -1277,9 +1326,10 @@
         // Page load initializations
         window.onload = function() {
             initPointSelect();
-            renderTableRows('all');
+            updateFilterOptions();
+            setTableSystem('k12'); // Defaults to K-12 view first with correct calculations
             
-            // Default load
+            // Default load for calculator preset
             document.getElementById('preset-select').value = 'bachelor-start';
             applyPreset();
             calculateHourlyPay();
